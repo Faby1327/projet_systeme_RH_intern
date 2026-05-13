@@ -68,4 +68,24 @@ class TypeCongeController extends BaseController
 
         return redirect()->to(site_url('admin/types-conge'))->with('success', 'Type de conge mis a jour.');
     }
+
+    public function delete(int $id)
+    {
+        $typeConge = $this->typeCongeModel->find($id);
+        if ($typeConge === null) {
+            return redirect()->to(site_url('admin/types-conge'))->with('error', 'Type de conge introuvable.');
+        }
+
+        $db = db_connect();
+        $usedByConges = $db->table('conges')->where('type_conge_id', $id)->countAllResults() > 0;
+        $usedBySoldes = $db->table('soldes')->where('type_conge_id', $id)->countAllResults() > 0;
+
+        if ($usedByConges || $usedBySoldes) {
+            return redirect()->to(site_url('admin/types-conge'))->with('warn', 'Suppression impossible: ce type de conge est deja utilise.');
+        }
+
+        $this->typeCongeModel->delete($id);
+
+        return redirect()->to(site_url('admin/types-conge'))->with('success', 'Type de conge supprime.');
+    }
 }

@@ -58,16 +58,22 @@
                     <td class="td-mono"><?= esc((string) $type['jours_annuels']) ?></td>
                     <td><?= (int) $type['deductible'] === 1 ? 'Oui' : 'Non' ?></td>
                     <td>
-                        <form action="<?= site_url('admin/types-conge/' . $type['id'] . '/edit') ?>" method="post" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-                            <?= csrf_field() ?>
-                            <input class="f-input" type="text" name="libelle" value="<?= esc($type['libelle']) ?>" style="width:180px;padding:6px 8px;font-size:.75rem" />
-                            <input class="f-input" type="number" min="0" name="jours_annuels" value="<?= esc((string) $type['jours_annuels']) ?>" style="width:90px;padding:6px 8px;font-size:.75rem" />
-                            <select class="f-select" name="deductible" style="width:90px;padding:6px 8px;font-size:.75rem">
-                                <option value="1" <?= (int) $type['deductible'] === 1 ? 'selected' : '' ?>>Oui</option>
-                                <option value="0" <?= (int) $type['deductible'] === 0 ? 'selected' : '' ?>>Non</option>
-                            </select>
-                            <button type="submit" class="btn-sm btn-edit"><i class="bi bi-save"></i> Enregistrer</button>
-                        </form>
+                        <div class="action-btns">
+                            <form action="<?= site_url('admin/types-conge/' . $type['id'] . '/edit') ?>" method="post" style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+                                <?= csrf_field() ?>
+                                <input class="f-input" type="text" name="libelle" value="<?= esc($type['libelle']) ?>" style="width:180px;padding:6px 8px;font-size:.75rem" />
+                                <input class="f-input" type="number" min="0" name="jours_annuels" value="<?= esc((string) $type['jours_annuels']) ?>" style="width:90px;padding:6px 8px;font-size:.75rem" />
+                                <select class="f-select" name="deductible" style="width:90px;padding:6px 8px;font-size:.75rem">
+                                    <option value="1" <?= (int) $type['deductible'] === 1 ? 'selected' : '' ?>>Oui</option>
+                                    <option value="0" <?= (int) $type['deductible'] === 0 ? 'selected' : '' ?>>Non</option>
+                                </select>
+                                <button type="submit" class="btn-sm btn-edit"><i class="bi bi-save"></i> Enregistrer</button>
+                            </form>
+                            <form action="<?= site_url('admin/types-conge/' . $type['id'] . '/delete') ?>" method="post">
+                                <?= csrf_field() ?>
+                                <button type="submit" class="btn-sm btn-del"><i class="bi bi-trash"></i> Supprimer</button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
             <?php endforeach; ?>

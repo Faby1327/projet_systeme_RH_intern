@@ -119,6 +119,10 @@
                                     <button class="btn-sm btn-view" type="submit"><i class="bi bi-arrow-counterclockwise"></i> Reactiver</button>
                                 <?php endif; ?>
                             </form>
+                            <form action="<?= site_url('admin/employes/' . $employe['id'] . '/delete') ?>" method="post">
+                                <?= csrf_field() ?>
+                                <button class="btn-sm btn-del" type="submit"><i class="bi bi-trash"></i> Supprimer</button>
+                            </form>
                         </div>
                     </td>
                 </tr>

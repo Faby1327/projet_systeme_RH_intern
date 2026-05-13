@@ -131,4 +131,24 @@ class EmployeController extends BaseController
 
         return redirect()->to(site_url('admin/employes'))->with('success', $message);
     }
+
+    public function delete(int $id)
+    {
+        $employe = $this->employeModel->find($id);
+        if ($employe === null) {
+            throw PageNotFoundException::forPageNotFound('Employe introuvable.');
+        }
+
+        $db = db_connect();
+        $hasConges = $db->table('conges')->where('employe_id', $id)->countAllResults() > 0;
+        $hasSoldes = $db->table('soldes')->where('employe_id', $id)->countAllResults() > 0;
+
+        if ($hasConges || $hasSoldes) {
+            return redirect()->to(site_url('admin/employes'))->with('warn', 'Suppression impossible: cet employe possede deja des conges ou des soldes.');
+        }
+
+        $this->employeModel->delete($id);
+
+        return redirect()->to(site_url('admin/employes'))->with('success', 'Employe supprime.');
+    }
 }
