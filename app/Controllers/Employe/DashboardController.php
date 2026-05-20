@@ -35,6 +35,8 @@ class DashboardController extends BaseController
             'annee' => $annee,
             'soldes' => $soldes,
             'recentConges' => $this->congeModel->getRecentByEmploye($employeId),
+            'dashboardConges' => $this->congeModel->getByEmploye($employeId),
+            'congesByType' => $this->congeModel->getCountByTypeForEmploye($employeId),
             'stats' => $stats,
             'joursRestants' => $joursAttribues - $joursPris,
             'joursAttribues' => $joursAttribues,

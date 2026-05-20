@@ -74,4 +74,5 @@
         </table>
     <?php endif; ?>
 </div>
+
 <?= $this->endSection() ?>

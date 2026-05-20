@@ -213,6 +213,13 @@ code,pre,.mono{font-family:'DM Mono',monospace}
 .type-badge{display:inline-block;font-size:.68rem;font-weight:500;padding:3px 8px;border-radius:4px;background:#f1efe8;color:#444441}
 
 /* --------------------------------------------------------------------------
+   WEEK CALENDAR
+   -------------------------------------------------------------------------- */
+.employee-event-content{display:flex;flex-direction:column;gap:2px}
+.employee-event-title{font-size:.72rem;font-weight:600;line-height:1.2}
+.employee-event-meta{font-size:.66rem;opacity:.9;line-height:1.2}
+
+/* --------------------------------------------------------------------------
    PROFILE ROW
    -------------------------------------------------------------------------- */
 .profile-row{display:flex;align-items:center;gap:12px}

@@ -137,6 +137,20 @@ class CongeModel extends Model
             ->getResultArray();
     }
 
+    public function getCountByTypeForEmploye(int $employeId): array
+    {
+        $results = $this->db->table('types_conge tc')
+            ->select('tc.libelle, COUNT(c.id) AS total')
+            ->join('conges c', 'c.type_conge_id = tc.id AND c.employe_id = ' . $employeId, 'left', false)
+            ->groupBy('tc.id, tc.libelle')
+            ->orderBy('tc.id', 'ASC')
+            ->get()
+            ->getResultArray();
+        
+        // Filter out types with 0 demands
+        return array_filter($results, fn($row) => (int) $row['total'] > 0);
+    }
+
     public function hasOverlap(int $employeId, string $debut, string $fin, ?int $excludeId = null): bool
     {
         $builder = $this->where('employe_id', $employeId)
@@ -177,5 +191,79 @@ class CongeModel extends Model
         }
 
         return $nbJours;
+    }
+
+    public function getCountByMonth(): array
+    {
+        $anneeActuelle = date('Y');
+        
+        $sql = "SELECT 
+                    CAST(strftime('%m', c.date_debut) AS INTEGER) as mois,
+                    COUNT(c.id) as total
+                FROM conges c
+                WHERE c.statut = 'approuvee' 
+                  AND CAST(strftime('%Y', c.date_debut) AS INTEGER) = ?
+                GROUP BY strftime('%m', c.date_debut)";
+        
+        try {
+            $rows = $this->db->query($sql, [$anneeActuelle])->getResultArray();
+        } catch (\Exception $e) {
+            return [];
+        }
+        
+        $mois = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+        $result = [];
+        
+        for ($i = 1; $i <= 12; $i++) {
+            $found = null;
+            foreach ($rows as $row) {
+                if ((int) $row['mois'] === $i) {
+                    $found = $row;
+                    break;
+                }
+            }
+            $result[] = [
+                'mois' => $mois[$i - 1],
+                'total' => $found ? (int) $found['total'] : 0
+            ];
+        }
+        
+        return $result;
+    }
+
+    public function getCountByDayOfWeek(): array
+    {
+        $sql = "SELECT 
+                    CAST(strftime('%w', c.date_debut) AS INTEGER) as jour_num,
+                    COUNT(c.id) as total
+                FROM conges c
+                WHERE c.statut = 'approuvee'
+                GROUP BY strftime('%w', c.date_debut)";
+        
+        try {
+            $rows = $this->db->query($sql)->getResultArray();
+        } catch (\Exception $e) {
+            return [];
+        }
+        
+        $jours = ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'];
+        $result = [];
+        
+        // Loop through weekdays only (1-5: lundi to vendredi)
+        for ($i = 1; $i <= 5; $i++) {
+            $found = null;
+            foreach ($rows as $row) {
+                if ((int) $row['jour_num'] === $i) {
+                    $found = $row;
+                    break;
+                }
+            }
+            $result[] = [
+                'jour' => $jours[$i],
+                'total' => $found ? (int) $found['total'] : 0
+            ];
+        }
+        
+        return $result;
     }
 }
